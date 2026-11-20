@@ -618,6 +618,21 @@
             align-items: end;
         }
 
+        .resume-saved-chat {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border: 1px solid var(--olive);
+            border-radius: 24px;
+            background: transparent;
+            color: var(--forest);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .resume-saved-chat:hover {
+            background: #e1e8ce;
+        }
+
         .plan-submit {
             width: 100%;
             padding: 14px 12px;
@@ -1501,23 +1516,64 @@ body.trip-scene-open {
     border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer;
     color: #fff; background: var(--forest); font: inherit;
 }
+.chat-signup-panel {
+    display: grid;
+    gap: 8px;
+    padding: 14px;
+    border: 1px solid rgba(24, 59, 47, .2);
+    border-radius: 12px;
+    background: #f6f2e7;
+    color: var(--forest);
+}
+.chat-signup-panel[hidden] { display: none; }
+.chat-signup-panel h4, .chat-signup-panel p { margin: 0; }
+.chat-signup-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.chat-signup-actions a {
+    display: inline-block;
+    padding: 9px 13px;
+    border-radius: 8px;
+    color: #fff;
+    background: var(--forest);
+    font-weight: 700;
+    text-decoration: none;
+}
+.chat-signup-actions a:last-child { color: var(--forest); background: #fff; border: 1px solid #b9c9bd; }
 .feedback-panel { margin: 12px 0 26px; padding: 18px; border-radius: 14px; background: #edf3ee; }
 .feedback-panel label { display: block; margin-bottom: 8px; font-weight: 700; }
 .feedback-controls { display: flex; gap: 10px; }
 .feedback-controls input { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid #b9c9bd; border-radius: 8px; font: inherit; }
-#routeSection h3 { margin-bottom: 10px; color: var(--forest); }
-#routeSection p { margin: 8px 0; line-height: 1.55; }
-#routeModes { margin: 12px 0; padding-left: 22px; }
-#routeModes li { margin: 8px 0; line-height: 1.5; }
-#routeLegs { display: grid; gap: 10px; margin: 14px 0; padding-left: 24px; }
-#routeLegs li { padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,.7); line-height: 1.5; }
-#routeCostSegments { display: grid; gap: 8px; margin: 10px 0; padding-left: 22px; }
-#routeCostSegments li { line-height: 1.5; }
-#routeLegs strong { color: var(--forest); }
-#routeSection .feedback-controls { flex-wrap: wrap; margin-top: 12px; }
-#routeSection a { color: var(--forest); font-weight: 700; text-decoration: underline; }
-#routeMap { height: 340px; margin: 14px 0; border-radius: 12px; background: #e5ece5; }
-#routeMapStatus { font-size: .95rem; color: var(--muted); }
+.route-panel { margin: 12px 0 26px; padding: clamp(18px, 2.4vw, 30px); border: 1px solid #dce6dd; border-radius: 22px; background: linear-gradient(145deg, #fbfcf8, #edf4ed); box-shadow: 0 18px 45px rgba(24,59,47,.08); }
+.route-panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.route-eyebrow, .route-total-label { color: var(--olive-dark); font-size: .72rem; font-weight: 800; letter-spacing: .14em; }
+.route-panel h3 { margin: 5px 0; color: var(--forest); font-family: 'Playfair Display', Georgia, serif; font-size: clamp(23px, 2.6vw, 32px); }
+.route-panel p { margin: 7px 0; line-height: 1.5; }
+.route-vehicle-pill { display: inline-flex; align-items: center; padding: 9px 13px; border: 1px solid #d5e0d6; border-radius: 999px; background: #fff; color: var(--forest); font-size: .82rem; font-weight: 750; }
+.route-total-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 20px 0; padding: 20px 22px; border-radius: 17px; color: #fff; background: var(--forest); }
+.route-total-card > div { display: grid; gap: 5px; }
+.route-total-label { color: #d6e3cb; }
+.route-total-card strong { font-size: clamp(23px, 3vw, 34px); line-height: 1.15; }
+.route-total-card small { color: #e0e9df; line-height: 1.45; }
+.route-total-icon { display: grid; width: 46px; height: 46px; place-items: center; flex: 0 0 auto; border-radius: 50%; background: rgba(255,255,255,.13); font-size: 25px; }
+.route-step-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 16px 0; }
+.route-step { display: flex; align-items: center; gap: 11px; min-width: 0; padding: 13px 15px; border: 1px solid #e0e8df; border-radius: 13px; background: rgba(255,255,255,.8); }
+.route-step-number { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #fff; background: var(--olive-dark); font-size: .8rem; font-weight: 800; }
+.route-step strong { display: block; color: var(--forest); }
+.route-step small { display: block; margin-top: 3px; color: var(--muted); }
+.route-mode-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.route-mode-chip { padding: 7px 11px; border-radius: 999px; color: #355647; background: #e1ecdf; font-size: .8rem; font-weight: 700; }
+.route-breakdown-details { margin-top: 16px; border-top: 1px solid #dce5db; }
+.route-breakdown-details summary { padding: 15px 0 4px; color: var(--forest); cursor: pointer; font-weight: 750; }
+.route-table-wrap { overflow-x: auto; margin-top: 12px; border: 1px solid #e1e8e0; border-radius: 12px; background: #fff; }
+.route-cost-table { width: 100%; border-collapse: collapse; font-size: .88rem; text-align: left; }
+.route-cost-table th, .route-cost-table td { padding: 11px 13px; border-bottom: 1px solid #edf0ea; white-space: nowrap; }
+.route-cost-table th { color: var(--muted); background: #f7f9f5; font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; }
+.route-cost-table tr:last-child td { border-bottom: 0; }
+.route-footer { margin-top: 14px; color: var(--muted); font-size: .82rem; }
+.route-footer a { display: inline-block; margin-top: 5px; color: var(--forest); font-weight: 750; text-decoration: none; }
+.route-footer a:hover { text-decoration: underline; }
+#routeMap { height: 340px; margin: 16px 0 0; border-radius: 15px; background: #e5ece5; }
+#routeMapStatus { font-size: .85rem; }
+@media (max-width: 600px) { .route-panel-heading { display: block; } .route-vehicle-pill { margin-top: 10px; } .route-total-card { padding: 17px; } .route-cost-table { font-size: .8rem; } }
 .daily-plan-grid { display: grid; gap: 16px; margin: 20px 0; }
 .daily-plan-card, .hotel-choice { padding: 18px; border: 1px solid rgba(24,59,47,.14); border-radius: 14px; background: #fff; }
 .daily-plan-card h3, .hotel-choice h4 { margin-top: 0; color: var(--forest); }
@@ -1557,6 +1613,11 @@ body.trip-scene-open {
 }
 .chat-message { max-width: 94%; padding: 12px 14px; border-radius: 12px; background: #fff; line-height: 1.5; overflow-wrap: anywhere; }
 .chat-message.user { margin-left: auto; color: #fff; background: var(--forest); }
+.chat-message.assistant h3 { margin: 0 0 10px; color: var(--forest); font-size: 1.08rem; line-height: 1.35; }
+.chat-message.assistant p { margin: 0 0 10px; }
+.chat-message.assistant ol, .chat-message.assistant ul { margin: 0 0 10px; padding-left: 24px; }
+.chat-message.assistant li { margin: 0 0 9px; padding-left: 2px; }
+.chat-message.assistant li:last-child, .chat-message.assistant p:last-child { margin-bottom: 0; }
 .chat-message a { color: inherit; font-weight: 700; }
 .chat-question-prompts { margin: 0; }
 .chat-question-prompts summary { width: fit-content; color: var(--forest); font-size: 13px; font-weight: 700; cursor: pointer; }
@@ -1715,6 +1776,13 @@ body.trip-scene-open {
     border: 0;
     border-top: 1px solid var(--line);
 }
+.trip-itinerary ul, .trip-itinerary ol { padding-left: 23px; }
+.trip-itinerary li::marker { color: var(--olive-dark); font-weight: 800; }
+.trip-itinerary a { color: var(--forest); font-weight: 700; text-underline-offset: 3px; }
+.trip-itinerary table { width: 100%; margin: 14px 0 20px; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid #dce5db; border-radius: 13px; background: #fff; font-size: .92em; }
+.trip-itinerary th, .trip-itinerary td { padding: 11px 13px; border-bottom: 1px solid #edf0ea; text-align: left; }
+.trip-itinerary th { color: var(--forest); background: #edf3ee; font-weight: 800; }
+.trip-itinerary tr:last-child td { border-bottom: 0; }
 
 .trip-note {
     margin-top: 24px;
@@ -2121,6 +2189,9 @@ body.trip-scene-open {
                                         <div id="formMessage" class="form-message"
                                              role="status" aria-live="polite"></div>
                                     </form>
+                                    <button type="button" id="resumeSavedChat" class="resume-saved-chat" hidden>
+                                        Continue your previous trip chat
+                                    </button>
                                 </div>
                             </div>
                         </section>
@@ -2142,6 +2213,14 @@ body.trip-scene-open {
                                 <h3>Chat with TripMate</h3>
                                 <p id="chatIntro">Choose a destination to start a conversation about your trip. Guests get five free assistant messages.</p>
                                 <div id="chatMessages" class="chat-messages" role="log" aria-live="polite"></div>
+                                <section id="chatSignupPanel" class="chat-signup-panel" role="alert" hidden>
+                                    <h4>Keep your trip and chat</h4>
+                                    <p id="chatSignupMessage">Your trip details and messages will be saved when you continue.</p>
+                                    <div class="chat-signup-actions">
+                                        <a href="{{ route('register') }}">Sign up free</a>
+                                        <a href="{{ route('login') }}">Sign in</a>
+                                    </div>
+                                </section>
                                 <details class="chat-question-prompts">
                                     <summary>Suggested questions</summary>
                                     <div class="chat-question-list" aria-label="Suggested destination questions">
@@ -2190,18 +2269,38 @@ body.trip-scene-open {
                 <h3>Places to visit each day</h3>
                 <div id="dailyPlanGrid" class="daily-plan-grid"></div>
             </section>
-            <section id="routeSection" class="feedback-panel" hidden>
-                <h3 id="routeHeading">Route and transport</h3>
-                <p id="routeBestVehicle"></p>
-                <p id="routeRecommendation"></p>
-                <ol id="routeLegs"></ol>
-                <ul id="routeModes"></ul>
-                <p id="routeEstimate"></p>
-                <ol id="routeCostSegments"></ol>
-                <p id="routeMapStatus"></p>
+            <section id="routeSection" class="route-panel" hidden>
+                <div class="route-panel-heading">
+                    <div>
+                        <span class="route-eyebrow">THE JOURNEY</span>
+                        <h3 id="routeHeading">Your route</h3>
+                        <p id="routeRecommendation"></p>
+                    </div>
+                    <span id="routeBestVehicle" class="route-vehicle-pill"></span>
+                </div>
+                <div class="route-total-card">
+                    <div>
+                        <span class="route-total-label">ESTIMATED TRANSPORT BUDGET</span>
+                        <strong id="routeEstimate"></strong>
+                        <small id="routeEstimateNote"></small>
+                    </div>
+                    <span class="route-total-icon" aria-hidden="true">↗</span>
+                </div>
+                <div id="routeLegs" class="route-step-list" aria-label="Main route"></div>
+                <div class="route-mode-list" id="routeModes" aria-label="Transport choices"></div>
+                <details class="route-breakdown-details">
+                    <summary><span id="routeBreakdownSummary">View route details</span></summary>
+                    <div class="route-table-wrap">
+                        <table class="route-cost-table">
+                            <thead><tr><th scope="col">Route leg</th><th scope="col">Distance</th><th scope="col">Suggested travel</th><th scope="col">Fare estimate</th></tr></thead>
+                            <tbody id="routeCostSegments"></tbody>
+                        </table>
+                    </div>
+                </details>
                 <div id="routeMap" role="img" aria-label="OpenStreetMap route map" hidden></div>
-                <p id="routeNote"></p>
-                <div class="feedback-controls">
+                <div class="route-footer">
+                    <p id="routeMapStatus"></p>
+                    <p id="routeNote"></p>
                     <a id="routeMapLink" target="_blank" rel="noopener noreferrer">View route on OpenStreetMap</a>
                 </div>
             </section>
@@ -2523,6 +2622,9 @@ body.trip-scene-open {
         const chatLog = document.getElementById('chatMessages');
         const chatMessageInput = document.getElementById('chatMessageInput');
         const sendChatMessageButton = document.getElementById('sendChatMessageButton');
+        const chatSignupPanel = document.getElementById('chatSignupPanel');
+        const chatSignupMessage = document.getElementById('chatSignupMessage');
+        let chatLimitReached = false;
         let selectedDestination = '';
         let currentPlanPayload = null;
         let currentPlanResult = null;
@@ -2532,6 +2634,7 @@ body.trip-scene-open {
         let chatHistoryGeneration = 0;
         const dateInput = document.getElementById('start_date');
         const tripResult = document.getElementById('tripResult');
+        const resumeSavedChatButton = document.getElementById('resumeSavedChat');
         const tripSummary = document.getElementById('tripSummary');
         const tripSceneMessage = document.getElementById('tripSceneMessage');
         const tripSceneLoading = document.getElementById('tripSceneLoading');
@@ -2545,6 +2648,8 @@ body.trip-scene-open {
         const routeLegs = document.getElementById('routeLegs');
         const routeModes = document.getElementById('routeModes');
         const routeEstimate = document.getElementById('routeEstimate');
+        const routeEstimateNote = document.getElementById('routeEstimateNote');
+        const routeBreakdownSummary = document.getElementById('routeBreakdownSummary');
         const routeCostSegments = document.getElementById('routeCostSegments');
         const routeMapElement = document.getElementById('routeMap');
         const routeMapStatus = document.getElementById('routeMapStatus');
@@ -2619,6 +2724,107 @@ body.trip-scene-open {
                 routeMapStatus.textContent = roadRoute.note || 'Showing OpenStreetMap locations; a calculated driving route is unavailable.';
             }
         }
+
+        function appendItineraryInline(parent, value) {
+            const pattern = /\[([^\]]+)\]\((https:\/\/[^\s)]+)\)|\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+            let cursor = 0;
+            let match;
+            while ((match = pattern.exec(value)) !== null) {
+                parent.appendChild(document.createTextNode(value.slice(cursor, match.index)));
+                if (match[1] && match[2]) {
+                    const link = document.createElement('a');
+                    link.href = match[2];
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = match[1];
+                    parent.appendChild(link);
+                } else if (match[3]) {
+                    const strong = document.createElement('strong');
+                    strong.textContent = match[3];
+                    parent.appendChild(strong);
+                } else if (match[4]) {
+                    const emphasis = document.createElement('em');
+                    emphasis.textContent = match[4];
+                    parent.appendChild(emphasis);
+                }
+                cursor = pattern.lastIndex;
+            }
+            parent.appendChild(document.createTextNode(value.slice(cursor)));
+        }
+
+        function renderItineraryMarkdown(source) {
+            const fragment = document.createDocumentFragment();
+            const lines = String(source || '').replace(/\r/g, '').split('\n');
+            const isTableRow = line => /^\s*\|.*\|\s*$/.test(line);
+            const tableCells = line => line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(cell => cell.trim());
+            let index = 0;
+            while (index < lines.length) {
+                const line = lines[index].trim();
+                if (!line) { index++; continue; }
+                const heading = line.match(/^(#{1,4})\s+(.+)$/);
+                if (heading) {
+                    const element = document.createElement('h' + heading[1].length);
+                    appendItineraryInline(element, heading[2]);
+                    fragment.appendChild(element);
+                    index++;
+                    continue;
+                }
+                if (/^(---+|___+|\*\*\*+)$/.test(line)) {
+                    fragment.appendChild(document.createElement('hr'));
+                    index++;
+                    continue;
+                }
+                if (isTableRow(line) && index + 1 < lines.length && /^\s*\|?\s*:?-{3,}/.test(lines[index + 1])) {
+                    const table = document.createElement('table');
+                    const head = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    tableCells(line).forEach(value => {
+                        const cell = document.createElement('th');
+                        cell.scope = 'col';
+                        appendItineraryInline(cell, value);
+                        headerRow.appendChild(cell);
+                    });
+                    head.appendChild(headerRow);
+                    table.appendChild(head);
+                    index += 2;
+                    const body = document.createElement('tbody');
+                    while (index < lines.length && isTableRow(lines[index])) {
+                        const row = document.createElement('tr');
+                        tableCells(lines[index]).forEach(value => {
+                            const cell = document.createElement('td');
+                            appendItineraryInline(cell, value);
+                            row.appendChild(cell);
+                        });
+                        body.appendChild(row);
+                        index++;
+                    }
+                    table.appendChild(body);
+                    fragment.appendChild(table);
+                    continue;
+                }
+                const listMatch = line.match(/^([-*]|\d+[.)])\s+(.+)$/);
+                if (listMatch) {
+                    const ordered = /^\d/.test(listMatch[1]);
+                    const list = document.createElement(ordered ? 'ol' : 'ul');
+                    while (index < lines.length) {
+                        const itemMatch = lines[index].trim().match(/^([-*]|\d+[.)])\s+(.+)$/);
+                        if (!itemMatch || /^\d/.test(itemMatch[1]) !== ordered) break;
+                        const item = document.createElement('li');
+                        appendItineraryInline(item, itemMatch[2]);
+                        list.appendChild(item);
+                        index++;
+                    }
+                    fragment.appendChild(list);
+                    continue;
+                }
+                const paragraph = document.createElement('p');
+                appendItineraryInline(paragraph, line);
+                fragment.appendChild(paragraph);
+                index++;
+            }
+            return fragment;
+        }
+
         const copyItineraryButton = document.getElementById('copyItineraryBtn');
         const printItineraryButton = document.getElementById('printItineraryBtn');
         let plannerScrollPosition = 0;
@@ -2653,8 +2859,6 @@ body.trip-scene-open {
                 chatMessageInput.placeholder = 'Ask about your trip or a destination idea';
                 selectedDestination = '';
                 currentPlanPayload = null;
-                chatLog.replaceChildren();
-                clientChatHistory.length = 0;
                 dailyPlanSection.hidden = true;
                 routeSection.hidden = true;
                 hotelSection.hidden = true;
@@ -2664,6 +2868,10 @@ body.trip-scene-open {
                 withinBudgetSection.hidden = true;
                 stretchSection.hidden = true;
                 destinationChoicePanel.hidden = true;
+                chatSignupPanel.hidden = true;
+                chatLimitReached = false;
+                chatMessageInput.disabled = true;
+                sendChatMessageButton.disabled = true;
             }
             tripResult.hidden = false;
             document.body.classList.add('trip-scene-open');
@@ -2677,6 +2885,13 @@ body.trip-scene-open {
         }
 
         closeTripSceneButton.addEventListener('click', closeTripScene);
+
+        resumeSavedChatButton.addEventListener('click', () => {
+            if (!currentPlanPayload) return;
+            tripResult.hidden = false;
+            document.body.classList.add('trip-scene-open');
+            tripResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
 
         function updateTourTypeFields() {
             const isGroup = tripTypeInput.value === 'group';
@@ -2724,11 +2939,6 @@ body.trip-scene-open {
         async function requestTripPlan(payload, button, loadingText, endpoint = 'trip.plan') {
             const isNewSearch = button === submitButton;
             if (isNewSearch) openTripScene(true);
-            else {
-                chatHistoryGeneration++;
-                clientChatHistory.length = 0;
-                chatLog.replaceChildren();
-            }
             tripSceneLoading.hidden = false;
             tripSceneMessage.className = 'trip-scene-message';
             tripSceneMessage.textContent = '';
@@ -2755,11 +2965,13 @@ body.trip-scene-open {
                     result.budget_warning || (result.itinerary ? 'Your selected destination itinerary is ready.' : 'Here are your updated trip options.'),
                     result.budget_warning ? 'warning' : 'success'
                 );
+                return true;
             } catch (error) {
                 tripSceneLoading.hidden = true;
                 displayFormMessage(error instanceof TypeError
                     ? 'Could not connect to the trip-planning service. Check that both servers are running.'
                     : (error.message || 'Something went wrong. Please try again.'), 'error');
+                return false;
             } finally {
                 button.disabled = false;
                 button.textContent = oldText;
@@ -2767,14 +2979,26 @@ body.trip-scene-open {
         }
 
         function showTripResult(result, payload, {
-            preserveStretch = false,
             preservePlan = false
         } = {}) {
             const incoming = result && result.data && typeof result.data === 'object' ? result.data : result;
+            const previousPlan = currentPlanResult;
+            const incomingRecommendations = incoming && incoming.recommendations && typeof incoming.recommendations === 'object'
+                ? incoming.recommendations
+                : {};
+            const incomingHasOptions = ['within_budget', 'stretch'].some(group =>
+                Array.isArray(incomingRecommendations[group]) && incomingRecommendations[group].length > 0
+            );
+            const preserveRecommendations = Boolean(
+                preservePlan && previousPlan && !incomingHasOptions && !incoming.budget_warning
+            );
             const body = preservePlan && currentPlanResult
                 ? {
                     ...currentPlanResult,
                     ...incoming,
+                    recommendations: preserveRecommendations
+                        ? currentPlanResult.recommendations
+                        : (incoming.recommendations || currentPlanResult.recommendations),
                     itinerary: incoming.itinerary || currentPlanResult.itinerary || '',
                     route_guidance: incoming.route_guidance || currentPlanResult.route_guidance,
                     daily_plan: Array.isArray(incoming.daily_plan) ? incoming.daily_plan : currentPlanResult.daily_plan,
@@ -2783,6 +3007,8 @@ body.trip-scene-open {
                 : incoming;
             currentPlanResult = body;
             currentPlanPayload = { ...(body.trip || payload) };
+            chatMessageInput.disabled = !currentPlanPayload || chatLimitReached;
+            sendChatMessageButton.disabled = !currentPlanPayload || chatLimitReached;
             const itinerary = typeof body.itinerary === 'string' ? body.itinerary.trim() : '';
             tripResultTitle.textContent = itinerary ? 'Your selected destination plan' : 'Choose a destination to plan';
 
@@ -2810,53 +3036,69 @@ body.trip-scene-open {
             const route = body.route_guidance;
             routeSection.hidden = !itinerary || !route;
             if (route) {
-                routeHeading.textContent = `Route: ${route.origin} to ${route.destination}`;
-                routeBestVehicle.textContent = route.best_vehicle
-                    ? `Suggested vehicle combination: ${route.best_vehicle}`
-                    : '';
-                routeRecommendation.textContent = route.recommended || '';
+                routeHeading.textContent = (route.origin || 'Start') + ' to ' + (route.destination || 'Destination');
+                routeBestVehicle.textContent = route.best_vehicle || 'Compare local transport';
+                routeRecommendation.textContent = (route.recommended || '').slice(0, 150);
                 routeLegs.replaceChildren();
-                (Array.isArray(route.legs) ? route.legs : []).forEach(leg => {
-                    const item = document.createElement('li');
-                    const routeLine = document.createElement('strong');
-                    routeLine.textContent = `${leg.from} → ${leg.to}`;
-                    item.appendChild(routeLine);
-                    item.appendChild(document.createElement('br'));
-                    item.appendChild(document.createTextNode(`${leg.vehicle}. ${leg.note || ''}`));
+                (Array.isArray(route.legs) ? route.legs : []).forEach((leg, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'route-step';
+                    const number = document.createElement('span');
+                    number.className = 'route-step-number';
+                    number.textContent = String(index + 1).padStart(2, '0');
+                    const text = document.createElement('span');
+                    const path = document.createElement('strong');
+                    path.textContent = (leg.from || 'Start') + ' to ' + (leg.to || 'Next stop');
+                    const vehicle = document.createElement('small');
+                    vehicle.textContent = leg.vehicle || 'Check local transport';
+                    text.append(path, vehicle);
+                    item.append(number, text);
                     routeLegs.appendChild(item);
                 });
-                routeLegs.hidden = routeLegs.childElementCount === 0;
                 routeModes.replaceChildren();
                 (Array.isArray(route.modes) ? route.modes : []).forEach(mode => {
-                    const item = document.createElement('li');
-                    item.textContent = `${mode.name}: ${mode.guidance}`;
+                    const item = document.createElement('span');
+                    item.className = 'route-mode-chip';
+                    item.textContent = (mode.name || '').split(';')[0].slice(0, 56);
                     routeModes.appendChild(item);
                 });
                 const totalTransport = route.total_transport_estimate || {};
                 routeEstimate.textContent = totalTransport.status !== 'unavailable'
                     && totalTransport.minimum !== null && totalTransport.minimum !== undefined
-                    ? `${totalTransport.status === 'partial' ? 'Partial estimated transportation total' : 'Estimated transportation total'}: ${totalTransport.currency} ${Number(totalTransport.minimum).toLocaleString()}–${Number(totalTransport.maximum).toLocaleString()} for the full tour. ${totalTransport.note || ''}`
-                    : `Transportation cost range unavailable. ${totalTransport.note || ''}`;
+                    ? totalTransport.currency + ' ' + Number(totalTransport.minimum).toLocaleString() + '–' + Number(totalTransport.maximum).toLocaleString()
+                    : 'Not available';
+                const allSegments = Array.isArray(route.transport_segments) ? route.transport_segments : [];
+                const pricedSegments = allSegments.filter(segment => segment.fare && segment.fare.status === 'estimated_range');
+                const statusLabel = totalTransport.status === 'partial' ? 'Partial estimate' : 'Planning estimate';
+                routeEstimateNote.textContent = statusLabel + (totalTransport.status === 'partial' ? ' - some segments are not included.' : ' - all routed legs included.');
+                routeBreakdownSummary.textContent = allSegments.length
+                    ? 'See route-by-route fares (' + allSegments.length + ' legs)'
+                    : 'See route details';
                 routeCostSegments.replaceChildren();
-                (Array.isArray(route.transport_segments) ? route.transport_segments : []).forEach(segment => {
-                    const item = document.createElement('li');
+                allSegments.forEach(segment => {
+                    const row = document.createElement('tr');
                     const fare = segment.fare || {};
                     const distance = segment.distance_km === null || segment.distance_km === undefined
-                        ? 'distance unavailable'
-                        : `${Number(segment.distance_km).toLocaleString()} km · about ${Number(segment.duration_minutes).toLocaleString()} min`;
+                        ? '—'
+                        : Number(segment.distance_km).toLocaleString() + ' km';
                     const cost = fare.status === 'estimated_range'
-                        ? `${fare.currency} ${Number(fare.minimum).toLocaleString()}–${Number(fare.maximum).toLocaleString()}`
-                        : 'fare range unavailable';
-                    item.textContent = `${segment.from} → ${segment.to}: ${distance}; ${segment.vehicle}; estimated ${segment.fare && segment.fare.return_trip ? 'return fare ' : ''}${cost}.`;
-                    routeCostSegments.appendChild(item);
+                        ? fare.currency + ' ' + Number(fare.minimum).toLocaleString() + '–' + Number(fare.maximum).toLocaleString()
+                        : 'Not priced';
+                    const routeName = (segment.day ? 'Day ' + segment.day + ': ' : '')
+                        + (segment.from || 'Start') + ' to ' + (segment.to || 'Next stop');
+                    [routeName, distance, segment.vehicle || 'Local transport', cost].forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+                    routeCostSegments.appendChild(row);
                 });
                 renderRouteMap(route);
                 routeNote.textContent = route.note || '';
                 routeMapLink.href = route.route_url || '#';
-                routeMapLink.textContent = route.route_label || 'Open route directions';
+                routeMapLink.textContent = route.route_label || 'View route map';
                 routeMapLink.hidden = !route.route_url;
             }
-
             const recommendations = body.recommendations || {};
             const recommendationGroups = Array.isArray(recommendations)
                 ? {
@@ -2864,24 +3106,51 @@ body.trip-scene-open {
                     stretch: recommendations.filter(option => !option.within_budget)
                 }
                 : recommendations;
-            withinBudgetGrid.replaceChildren();
-            if (!preserveStretch) stretchGrid.replaceChildren();
+            if (!preserveRecommendations) {
+                withinBudgetGrid.replaceChildren();
+                stretchGrid.replaceChildren();
+            }
             const withinOptions = Array.isArray(recommendationGroups.within_budget) ? recommendationGroups.within_budget : [];
             const stretchOptions = Array.isArray(recommendationGroups.stretch) ? recommendationGroups.stretch : [];
-            withinBudgetSection.hidden = withinOptions.length === 0;
-            if (!preserveStretch) stretchSection.hidden = stretchOptions.length === 0;
+            if (!preserveRecommendations) {
+                withinBudgetSection.hidden = withinOptions.length === 0;
+                stretchSection.hidden = stretchOptions.length === 0;
+            }
             destinationChoicePanel.hidden = true;
-            Object.entries({ within_budget: withinOptions, stretch: stretchOptions }).forEach(([groupName, options]) => {
-                if (preserveStretch && groupName === 'stretch') return;
+            if (!preserveRecommendations) Object.entries({ within_budget: withinOptions, stretch: stretchOptions }).forEach(([groupName, options]) => {
                 options.forEach(option => {
                     const card = document.createElement('article');
                     card.className = 'recommendation-card';
+                    const image = document.createElement('img');
+                    image.alt = `Photo of ${option.name}`;
+                    image.loading = 'lazy';
+                    image.referrerPolicy = 'no-referrer';
+                    image.onerror = () => image.remove();
+                    card.appendChild(image);
                     if (typeof option.image_url === 'string' && option.image_url.startsWith('https://')) {
-                        const image = document.createElement('img');
                         image.src = option.image_url;
-                        image.alt = `Scenery in ${option.name}`;
-                        image.loading = 'lazy';
-                        card.appendChild(image);
+                    } else {
+                        const imageSearch = new URL('https://en.wikipedia.org/w/api.php');
+                        imageSearch.search = new URLSearchParams({
+                            action: 'query',
+                            generator: 'search',
+                            gsrsearch: `${option.name} ${option.country || ''}`.trim(),
+                            gsrnamespace: '0',
+                            gsrlimit: '1',
+                            prop: 'pageimages',
+                            pithumbsize: '900',
+                            format: 'json',
+                            origin: '*',
+                        }).toString();
+                        fetch(imageSearch.toString())
+                            .then(response => response.ok ? response.json() : null)
+                            .then(result => {
+                                const page = result?.query?.pages ? Object.values(result.query.pages)[0] : null;
+                                const thumbnail = page?.thumbnail?.source;
+                                if (typeof thumbnail === 'string' && thumbnail.startsWith('https://')) image.src = thumbnail;
+                                else image.remove();
+                            })
+                            .catch(() => image.remove());
                     }
                     const content = document.createElement('div');
                     content.className = 'recommendation-content';
@@ -3046,9 +3315,8 @@ body.trip-scene-open {
                 });
             }
 
-            // AI output is inserted as plain text, never interpreted as HTML.
-            tripItinerary.textContent = itinerary;
-            tripItinerary.style.whiteSpace = 'pre-wrap';
+            tripItinerary.replaceChildren(renderItineraryMarkdown(itinerary));
+            tripItinerary.style.whiteSpace = 'normal';
             tripItinerary.hidden = !itinerary;
             tripResultActions.hidden = !itinerary;
             const note = typeof body.note === 'string' ? body.note.trim() : '';
@@ -3056,8 +3324,14 @@ body.trip-scene-open {
             tripNote.hidden = !note;
             tripChatSection.hidden = false;
             tripSceneLoading.hidden = true;
-            if (typeof body.reply === 'string' && body.reply.trim()) {
-                appendChatMessage(body.reply, 'assistant', '', body.answer_media || [], body.answer_sources || []);
+            const chatUpdate = typeof body.reply === 'string' && body.reply.trim()
+                ? body.reply
+                : (typeof body.message === 'string' ? body.message.trim() : '');
+            if (chatUpdate) {
+                appendChatMessage(chatUpdate, 'assistant', '', body.answer_media || [], body.answer_sources || []);
+            }
+            if (Array.isArray(body.suggested_questions)) {
+                renderSuggestedQuestions(body.suggested_questions);
             }
             tripResult.hidden = false;
             document.body.classList.add('trip-scene-open');
@@ -3069,7 +3343,11 @@ body.trip-scene-open {
         function appendChatMessage(message, role, signupUrl = '', media = [], sources = []) {
             const bubble = document.createElement('div');
             bubble.className = `chat-message ${role}`;
-            bubble.textContent = message;
+            if (role === 'assistant') {
+                renderAssistantMessage(bubble, message);
+            } else {
+                bubble.textContent = message;
+            }
             if (signupUrl.startsWith('/') && role === 'assistant') {
                 bubble.appendChild(document.createTextNode(' '));
                 const link = document.createElement('a');
@@ -3105,9 +3383,90 @@ body.trip-scene-open {
             chatLog.scrollTop = chatLog.scrollHeight;
         }
 
+        function appendSafeInlineMarkdown(parent, text) {
+            const pattern = /\*\*([^*]+)\*\*|\*([^*]+)\*/g;
+            let cursor = 0;
+            let match;
+            while ((match = pattern.exec(text)) !== null) {
+                parent.appendChild(document.createTextNode(text.slice(cursor, match.index)));
+                const emphasis = document.createElement(match[1] ? 'strong' : 'em');
+                emphasis.textContent = match[1] || match[2];
+                parent.appendChild(emphasis);
+                cursor = pattern.lastIndex;
+            }
+            parent.appendChild(document.createTextNode(text.slice(cursor)));
+        }
+
+        function renderAssistantMessage(container, message) {
+            const blocks = String(message).trim().split(/\n\s*\n/).filter(Boolean);
+            blocks.forEach(block => {
+                const heading = block.match(/^#{1,3}\s+(.+)$/);
+                if (heading) {
+                    const title = document.createElement('h3');
+                    appendSafeInlineMarkdown(title, heading[1].trim());
+                    container.appendChild(title);
+                    return;
+                }
+
+                const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
+                const ordered = lines.length > 0 && lines.every(line => /^\d+[.)]\s+/.test(line));
+                const unordered = lines.length > 0 && lines.every(line => /^[-*]\s+/.test(line));
+                if (ordered || unordered) {
+                    const list = document.createElement(ordered ? 'ol' : 'ul');
+                    lines.forEach(line => {
+                        const item = document.createElement('li');
+                        appendSafeInlineMarkdown(item, line.replace(ordered ? /^\d+[.)]\s+/ : /^[-*]\s+/, ''));
+                        list.appendChild(item);
+                    });
+                    container.appendChild(list);
+                    return;
+                }
+
+                const paragraph = document.createElement('p');
+                appendSafeInlineMarkdown(paragraph, lines.join(' '));
+                container.appendChild(paragraph);
+            });
+        }
+
+        function renderSuggestedQuestions(questions) {
+            const list = document.querySelector('.chat-question-list');
+            if (!list) return;
+            const items = Array.isArray(questions)
+                ? questions.filter(item => typeof item === 'string' && item.trim()).slice(0, 5)
+                : [];
+            list.replaceChildren();
+            items.forEach(question => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.dataset.tripQuestion = question;
+                button.textContent = question;
+                button.addEventListener('click', () => sendChatMessage(question));
+                list.appendChild(button);
+            });
+        }
+
+        function suggestionsFromHistory(messages) {
+            const context = messages.slice(-8).map(item => item.content || '').join(' ').toLowerCase();
+            if (context.includes('goaldi')) return [
+                'Who built Goaldi Mosque and what does its inscription say?',
+                'What is special about Goaldi Mosque’s dome and corner towers?',
+                'What are the three mihrabs in Goaldi Mosque?',
+                'When was Goaldi Mosque restored, and what was repaired?',
+                'How can I visit Goaldi Mosque from Dhaka?'
+            ];
+            if (/mosque|temple|palace|fort|museum|monument/.test(context)) return [
+                'Who built this historic attraction and when?',
+                'What architectural details should I look for?',
+                'What is known about its restoration and preservation?',
+                'What other heritage sites are nearby?',
+                'How can I get there from Dhaka?'
+            ];
+            return [];
+        }
+
         async function sendChatMessage(suggestedMessage = '') {
             const message = suggestedMessage || chatMessageInput.value.trim();
-            if (!message || !currentPlanPayload) return;
+            if (!message || !currentPlanPayload || chatLimitReached) return;
             chatHistoryGeneration++;
             const history = clientChatHistory.slice(-10);
             appendChatMessage(message, 'user');
@@ -3140,16 +3499,22 @@ body.trip-scene-open {
                 });
                 const result = await response.json();
                 if (result.needs_signup) {
-                    appendChatMessage(result.message, 'assistant', result.signup_url || '/register');
+                    chatLimitReached = true;
+                    chatSignupMessage.textContent = result.message || 'Your trip details and current chat will be saved when you continue.';
+                    chatSignupPanel.hidden = false;
+                    chatMessageInput.disabled = true;
+                    sendChatMessageButton.disabled = true;
+                    chatSignupPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     return;
                 }
                 if (!response.ok) throw new Error(getReadableError(result, response.status));
-                showTripResult(result, currentPlanPayload, { preserveStretch: true, preservePlan: true });
+                showTripResult(result, currentPlanPayload, { preservePlan: true });
                 displayFormMessage(result.budget_warning || 'TripMate updated the recommendations from your message.', result.budget_warning ? 'warning' : 'success');
             } catch (error) {
                 appendChatMessage(error.message || 'I could not reach the TripMate service. Try again.', 'assistant');
             } finally {
-                sendChatMessageButton.disabled = false;
+                sendChatMessageButton.disabled = chatLimitReached;
+                chatMessageInput.disabled = chatLimitReached;
                 sendChatMessageButton.textContent = 'Send';
             }
         }
@@ -3161,17 +3526,92 @@ body.trip-scene-open {
         chatMessageInput.addEventListener('keydown', event => {
             if (event.key === 'Enter') sendChatMessage();
         });
-        const historyGeneration = chatHistoryGeneration;
-        fetch(@json(route('trip.chat.history')), { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
-            .then(response => response.ok ? response.json() : null)
-            .then(data => {
-                if (historyGeneration !== chatHistoryGeneration) return;
-                (data && Array.isArray(data.messages) ? data.messages : []).forEach(item => {
-                const context = item.context && typeof item.context === 'object' ? item.context : {};
-                appendChatMessage(item.content, item.role === 'user' ? 'user' : 'assistant', '', context.answer_media || [], context.answer_sources || []);
+        async function restoreChatHistory(fallbackMessages = []) {
+            chatHistoryGeneration++;
+            const generation = chatHistoryGeneration;
+            chatLog.replaceChildren();
+            clientChatHistory.length = 0;
+            try {
+                const response = await fetch(@json(route('trip.chat.history')), {
+                    credentials: 'same-origin',
+                    headers: { 'Accept': 'application/json' }
                 });
-            })
-            .catch(() => {});
+                const data = response.ok ? await response.json() : null;
+                if (generation !== chatHistoryGeneration) return;
+                const messages = data && Array.isArray(data.messages) && data.messages.length
+                    ? data.messages
+                    : fallbackMessages;
+
+                const tripFromContext = item => {
+                    const context = item && item.context && typeof item.context === 'object'
+                        ? item.context : {};
+                    const trip = context.trip && typeof context.trip === 'object'
+                        ? context.trip : context;
+                    return trip.budget && trip.duration_days && trip.departure_city && trip.start_date
+                        ? trip : null;
+                };
+                currentPlanPayload = (data && data.latest_trip) || [...messages].reverse()
+                    .map(tripFromContext).find(Boolean) || null;
+                currentPlanResult = currentPlanResult || (currentPlanPayload ? { trip: currentPlanPayload } : null);
+
+                if (messages.length) {
+                    resumeSavedChatButton.hidden = false;
+                    tripResultTitle.textContent = 'Your saved TripMate chat';
+                    const destination = currentPlanPayload && currentPlanPayload.destination;
+                    const duration = currentPlanPayload && currentPlanPayload.duration_days;
+                    const departure = currentPlanPayload && currentPlanPayload.departure_city;
+                    const currency = currentPlanPayload && currentPlanPayload.currency;
+                    const budget = currentPlanPayload && currentPlanPayload.budget;
+                    tripSummary.textContent = currentPlanPayload
+                        ? [destination ? `Destination: ${destination}` : '',
+                            duration ? `${duration}-day trip` : '',
+                            departure ? `Starting from ${departure}` : '',
+                            budget ? `Budget: ${currency || 'BDT'} ${Number(budget).toLocaleString()}` : '']
+                            .filter(Boolean).join(' · ')
+                        : 'Your recent conversation';
+                    chatIntro.textContent = destination
+                        ? `Continue your saved chat about ${destination}.`
+                        : 'Continue your saved TripMate conversation.';
+                    tripChatSection.hidden = false;
+                    tripSceneLoading.hidden = true;
+                    dailyPlanSection.hidden = true;
+                    routeSection.hidden = true;
+                    hotelSection.hidden = true;
+                    tripItinerary.hidden = true;
+                    tripResultActions.hidden = true;
+                    withinBudgetSection.hidden = true;
+                    stretchSection.hidden = true;
+                    destinationChoicePanel.hidden = true;
+                    chatMessageInput.disabled = !currentPlanPayload;
+                    sendChatMessageButton.disabled = !currentPlanPayload;
+                }
+                messages.forEach(item => {
+                    const context = item.context && typeof item.context === 'object' ? item.context : {};
+                    appendChatMessage(
+                        item.content,
+                        item.role === 'user' ? 'user' : 'assistant',
+                        '',
+                        context.answer_media || [],
+                        context.answer_sources || []
+                    );
+                });
+                const savedSuggestions = [...messages].reverse().find(item =>
+                    item.role === 'assistant'
+                    && Array.isArray(item.context && item.context.suggested_questions)
+                )?.context?.suggested_questions;
+                renderSuggestedQuestions(savedSuggestions || suggestionsFromHistory(messages));
+            } catch (_) {
+                if (fallbackMessages.length) {
+                    fallbackMessages.forEach(item => appendChatMessage(item.content, item.role));
+                } else if (@json(auth()->check())) {
+                    chatLog.replaceChildren();
+                    displayFormMessage(
+                        'I could not load your saved chat. Please refresh the page and confirm you are signed in.',
+                        'error'
+                    );
+                }
+            }
+        }
 
         changeOptionsButton.addEventListener('click', () => {
             if (!currentPlanPayload) return;
@@ -3289,7 +3729,7 @@ body.trip-scene-open {
 
         copyItineraryButton.addEventListener('click', async () => {
             const summary = tripSummary.textContent.trim();
-            const itinerary = tripItinerary.textContent.trim();
+            const itinerary = tripItinerary.innerText.trim();
             const note = tripNote.hidden ? '' : tripNote.textContent.trim();
             const textToCopy = ['TripMate AI — Your Trip Itinerary', summary, '', itinerary, note ? `\nNote: ${note}` : ''].filter(Boolean).join('\n');
             try {
@@ -3320,10 +3760,24 @@ body.trip-scene-open {
         });
 
         const resumeTrip = @json($resumeTrip ?? null);
-        if (resumeTrip && typeof resumeTrip === 'object') {
-            openTripScene(true);
-            requestTripPlan(resumeTrip, submitButton, 'Resuming your trip...', 'trip.recommendations');
-        }
+        const resumeChatMessage = @json($resumeChatMessage ?? null);
+        const resumeChatHistory = @json($resumeChatHistory ?? []);
+        (async () => {
+            if (resumeTrip && typeof resumeTrip === 'object') {
+                const resumed = await requestTripPlan(
+                    resumeTrip,
+                    submitButton,
+                    'Resuming your trip...',
+                    'trip.recommendations'
+                );
+                await restoreChatHistory(resumeChatHistory);
+                if (resumed && typeof resumeChatMessage === 'string' && resumeChatMessage.trim()) {
+                    await sendChatMessage(resumeChatMessage);
+                }
+                return;
+            }
+            await restoreChatHistory();
+        })();
     </script>
 </body>
 </html>

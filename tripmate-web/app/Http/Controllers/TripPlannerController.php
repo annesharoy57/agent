@@ -17,6 +17,11 @@ class TripPlannerController extends Controller
         $request->session()->forget('guest_chat_messages');
         $response = $this->forwardToAgent($trip, '/plan');
         if (Auth::check() && $response->getStatusCode() < 300) {
+            $request->session()->forget([
+                'pending_trip_context',
+                'pending_chat_message',
+                'pending_chat_history',
+            ]);
             $answer = $response->getData(true);
             TripChatMessage::create([
                 'user_id' => Auth::id(), 'role' => 'user',
@@ -84,11 +89,16 @@ class TripPlannerController extends Controller
         ]);
 
         if (!Auth::check() && $request->session()->get('guest_chat_turns', 0) >= 5) {
-            $request->session()->put('pending_trip_context', $validated['trip']);
+            $request->session()->put([
+                'pending_trip_context' => $validated['trip'],
+                'pending_chat_message' => $validated['message'],
+                'pending_chat_history' => $validated['history'] ?? [],
+            ]);
             return response()->json([
                 'needs_signup' => true,
-                'message' => 'You have used your five free assistant messages. Create a free account to keep chatting.',
+                'message' => 'You have used your five free assistant messages. Sign up or sign in to continue; your trip and chat will be saved.',
                 'signup_url' => route('register'),
+                'login_url' => route('login'),
             ], 429);
         }
 
@@ -110,6 +120,11 @@ class TripPlannerController extends Controller
         ];
         $response = $this->forwardToAgent($payload, '/chat');
         if (Auth::check() && $response->getStatusCode() < 300) {
+            $request->session()->forget([
+                'pending_trip_context',
+                'pending_chat_message',
+                'pending_chat_history',
+            ]);
             $answer = $response->getData(true);
             TripChatMessage::create([
                 'user_id' => Auth::id(),
@@ -125,6 +140,7 @@ class TripPlannerController extends Controller
                     'trip' => $trip,
                     'answer_media' => $answer['answer_media'] ?? [],
                     'answer_sources' => $answer['answer_sources'] ?? [],
+                    'suggested_questions' => $answer['suggested_questions'] ?? [],
                 ],
             ]);
         } elseif ($response->getStatusCode() < 300) {
@@ -136,6 +152,7 @@ class TripPlannerController extends Controller
                 'trip' => $trip,
                 'answer_media' => $answer['answer_media'] ?? [],
                 'answer_sources' => $answer['answer_sources'] ?? [],
+                'suggested_questions' => $answer['suggested_questions'] ?? [],
             ]];
             $request->session()->put('guest_chat_messages', array_slice($guestMessages, -10));
         }
@@ -146,6 +163,7 @@ class TripPlannerController extends Controller
     {
         if (!Auth::check()) {
             return response()->json([
+                'authenticated' => false,
                 'messages' => $request->session()->get('guest_chat_messages', []),
             ]);
         }
@@ -153,12 +171,26 @@ class TripPlannerController extends Controller
         $messages = TripChatMessage::query()
             ->where('user_id', Auth::id())
             ->latest('id')
-            ->limit(50)
+            ->limit(100)
             ->get(['role', 'content', 'created_at', 'context'])
             ->reverse()
             ->values();
 
-        return response()->json(['messages' => $messages]);
+        $latestTrip = null;
+        foreach ($messages->reverse() as $message) {
+            $context = is_array($message->context) ? $message->context : [];
+            $trip = is_array($context['trip'] ?? null) ? $context['trip'] : $context;
+            if (isset($trip['budget'], $trip['duration_days'], $trip['departure_city'], $trip['start_date'])) {
+                $latestTrip = $trip;
+                break;
+            }
+        }
+
+        return response()->json([
+            'authenticated' => true,
+            'messages' => $messages,
+            'latest_trip' => $latestTrip,
+        ]);
     }
 
     private function validatedTrip(Request $request): array

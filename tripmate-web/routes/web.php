@@ -6,7 +6,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 Route::get('/', function (Request $request) {
-    return view('home', ['resumeTrip' => $request->session()->pull('pending_trip_context')]);
+    return view('home', [
+        'resumeTrip' => $request->session()->get('pending_trip_context'),
+        'resumeChatMessage' => $request->session()->get('pending_chat_message'),
+        'resumeChatHistory' => $request->session()->get('pending_chat_history', []),
+    ]);
 })->name('home');
 Route::get('/register', [AccountController::class, 'registerForm'])->name('register');
 Route::post('/register', [AccountController::class, 'register'])->name('register.store');

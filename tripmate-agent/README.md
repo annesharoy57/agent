@@ -48,7 +48,7 @@ Start the agent from this directory so Laravel can reach its default local
 endpoint at `http://127.0.0.1:8001`:
 
 ```powershell
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
 ```
 
 ## Local tourism knowledge
@@ -67,10 +67,11 @@ what is known. Avoid embedding changing prices or access notices as timeless
 facts.
 ```
 
-The index is created lazily and cached by the running service; restart the
-agent after adding or editing files. Documents without a source URL are still
-retrieved locally but are not presented as external links. If local retrieval
-finds no relevant note, the research planner can search the web and extract
+The index is created lazily and cached by the running service. Markdown and text
+notes are re-indexed automatically when their file changes; Python code changes
+are picked up by Uvicorn's development reload. Documents without a source URL
+are still retrieved locally but are not presented as external links. If local
+retrieval finds no relevant note, the research planner can search the web and extract
 pages instead of stopping immediately. Search results and page text are
 retrieved at request time, but are not independently fact-checked; the model is
 instructed to use only retrieved evidence and to abstain when it is insufficient.
