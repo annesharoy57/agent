@@ -1,7 +1,6 @@
 import re
 import threading
 from datetime import date, timedelta
-from functools import lru_cache
 from typing import Any, Literal
 from urllib.parse import urlencode
 
@@ -10,7 +9,10 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.decision_engine import estimate_trip_cost, rank_destinations, split_recommendations
-from app.conversation import answer_travel_question, classify_travel_question, generate_reply
+from app.conversation import (
+    answer_travel_question, classify_travel_question, generate_reply,
+    is_destination_information_question,
+)
 from app.knowledge_base import LocalKnowledgeBase, destination_alias, knowledge_paths
 from app.local_model import model_status
 from app.research import (
@@ -59,16 +61,27 @@ DESTINATIONS: list[dict[str, Any]] = [
 
 
 _knowledge_base_lock = threading.Lock()
+_knowledge_base_instance: LocalKnowledgeBase | None = None
+_knowledge_file_signature: tuple[tuple[str, int, int], ...] | None = None
 
 
-@lru_cache(maxsize=1)
 def get_knowledge_base() -> LocalKnowledgeBase:
+    global _knowledge_base_instance, _knowledge_file_signature
     with _knowledge_base_lock:
         database_path, knowledge_dir = knowledge_paths()
-        knowledge_base = LocalKnowledgeBase(database_path, knowledge_dir)
-        knowledge_base.index_catalog(DESTINATIONS, DESTINATION_DAY_ROUTES)
-        knowledge_base.ingest_directory()
-        return knowledge_base
+        if _knowledge_base_instance is None:
+            _knowledge_base_instance = LocalKnowledgeBase(database_path, knowledge_dir)
+            _knowledge_base_instance.index_catalog(DESTINATIONS, DESTINATION_DAY_ROUTES)
+        signature = tuple(
+            (path.relative_to(knowledge_dir).as_posix(), path.stat().st_mtime_ns, path.stat().st_size)
+            for path in sorted(knowledge_dir.rglob("*"))
+            if path.is_file() and path.suffix.casefold() in {".md", ".txt"}
+            and path.name.casefold() != "readme.md"
+        ) if knowledge_dir.exists() else ()
+        if signature != _knowledge_file_signature:
+            _knowledge_base_instance.ingest_directory()
+            _knowledge_file_signature = signature
+        return _knowledge_base_instance
 
 
 class TripRequest(BaseModel):
@@ -541,54 +554,32 @@ def build_itinerary(
     else:
         lines.extend(["", "## Internet research", "Live destination research could not be retrieved during this request. The plan below uses TripMate's starter destination data; check local details before travelling."])
 
+    main_estimate = vehicle_guidance.get("transport_estimate", {})
+    local_estimate = vehicle_guidance.get("local_transport_estimate", {})
+    total_transport = vehicle_guidance.get("total_transport_estimate", {})
     lines.extend([
         "",
-        "## Route and transport",
-        f"- Suggested route: {request.departure_city} to {destination['name']}",
-        f"- Budget-aware vehicle choice: {vehicle_guidance['recommended']}",
-        "- Suggested vehicles by route leg:",
+        "## Getting there",
+        f"**{request.departure_city} -> {destination['name']}**",
+        f"- Suggested travel: {vehicle_guidance['best_vehicle']}",
     ])
-    for leg in vehicle_guidance["legs"]:
-        lines.append(f"  - {leg['from']} to {leg['to']}: {leg['vehicle']}. {leg['note']}")
-    main_estimate = vehicle_guidance.get("transport_estimate", {})
     if main_estimate.get("status") == "estimated_range":
         lines.append(
-            f"- Estimated intercity return transport: BDT "
-            f"{main_estimate['minimum']:,.0f}–{main_estimate['maximum']:,.0f} "
-            f"for {people} traveler(s), based on {vehicle_guidance['transport_estimate_vehicle']}."
+            f"- Intercity return: BDT {main_estimate['minimum']:,.0f}-{main_estimate['maximum']:,.0f}"
         )
     else:
+        lines.append("- Intercity fare: confirm a current route and fare with the operator")
+    if local_estimate.get("status") != "unavailable":
         lines.append(
-            "- Intercity return transport fare range is unavailable because a road distance could not be calculated."
+            f"- Local sightseeing transport: BDT {local_estimate['minimum']:,.0f}-{local_estimate['maximum']:,.0f}"
         )
-    lines.append("- Fare ranges are planning estimates; check current operator fares and schedules before travel.")
-    for segment in vehicle_guidance.get("transport_segments", []):
-        fare = segment["fare"]
-        distance = (
-            f"{segment['distance_km']} km, about {segment['duration_minutes']} min"
-            if segment.get("distance_km") is not None
-            else "route distance/time unavailable"
-        )
-        cost = (
-            f"BDT {fare['minimum']:,.0f}–{fare['maximum']:,.0f}"
-            if fare["status"] == "estimated_range"
-            else "fare range unavailable"
-        )
+    if total_transport.get("status") in {"estimated_range", "partial"}:
+        partial_label = " (partial estimate)" if total_transport["status"] == "partial" else ""
         lines.append(
-            f"- Transport segment: {segment['from']} to {segment['to']} — "
-            f"{segment['vehicle']}; {distance}; estimated {cost}."
-            f"{' Return fare estimate.' if segment['fare']['return_trip'] else ''}"
+            f"- **Estimated transport total{partial_label}: BDT "
+            f"{total_transport['minimum']:,.0f}-{total_transport['maximum']:,.0f}**"
         )
-    total_transport = vehicle_guidance.get("total_transport_estimate", {})
-    if total_transport:
-        if total_transport["status"] in {"estimated_range", "partial"}:
-            lines.append(
-                f"- **Estimated total transportation budget ({total_transport['status']}): "
-                f"BDT {total_transport['minimum']:,.0f}–{total_transport['maximum']:,.0f}.** "
-                f"{total_transport['note']}"
-            )
-        else:
-            lines.append(f"- **Transportation budget unavailable:** {total_transport['note']}")
+    lines.append("- Fare ranges are planning estimates, not live quotes. Unpriced legs are excluded.")
     if request.trip_type == "group":
         lines.append(
             f"- Group contribution: {money(float(request.contribution_per_person or 0), currency)} per member × {people} members."
@@ -789,13 +780,60 @@ def recommend_trips(request: TripRequest):
     }
 
 
+def _suggested_questions_for_chat(
+    message: str, reply: str, history: list[dict[str, str]] | None = None,
+) -> list[str]:
+    """Suggest next questions from the active attraction or subject."""
+    context = " ".join([
+        message,
+        reply,
+        *[
+            str(item.get("content", "")) for item in (history or [])[-6:]
+            if isinstance(item.get("content"), str)
+        ],
+    ]).casefold()
+    if "goaldi" in context:
+        return [
+            "Who built Goaldi Mosque and what does its inscription say?",
+            "What is special about Goaldi Mosque’s dome and corner towers?",
+            "What are the three mihrabs in Goaldi Mosque?",
+            "When was Goaldi Mosque restored, and what was repaired?",
+            "How can I visit Goaldi Mosque from Dhaka?",
+        ]
+    if any(term in context for term in ("mosque", "temple", "palace", "fort", "museum", "monument")):
+        return [
+            "Who built this historic attraction and when?",
+            "What architectural details should I look for?",
+            "What is known about its restoration and preservation?",
+            "What other heritage sites are nearby?",
+            "How can I get there from Dhaka?",
+        ]
+    if any(term in context for term in ("architecture", "architectural", "history", "heritage", "historic")):
+        return [
+            "Who built this attraction and when?",
+            "Which architectural details are most distinctive?",
+            "What role did it play in local history?",
+            "What other heritage places are nearby?",
+            "How can I plan a visit?",
+        ]
+    return [
+        "What are the top attractions there?",
+        "How can I get there from Dhaka?",
+        "What is the best time to visit?",
+        "What local food should I try?",
+    ]
+
+
 @app.post("/chat")
 def chat_with_tripmate(request: ChatRequest):
     message = request.message.strip()
     trip = request.trip.model_copy(deep=True)
     message_lower = message.casefold().replace("’", "'")
     question_type = classify_travel_question(message)
-    if question_type is None:
+    information_question = (
+        question_type is None and is_destination_information_question(message)
+    )
+    if question_type is None and not information_question:
         previous_question = next(
             (
                 item.get("content", "")
@@ -826,7 +864,7 @@ def chat_with_tripmate(request: ChatRequest):
         "thailand": "Thailand", "bangladesh": "Bangladesh",
     }
     requested_country = next((country for alias, country in country_aliases.items() if alias in message_lower), None)
-    if not explicit_places and requested_country:
+    if not explicit_places and requested_country and not information_question:
         explicit_places = [place for place in DESTINATIONS if place["country"].casefold() == requested_country.casefold()]
     mentions_past_visit = any(phrase in message_lower for phrase in ("visited", "been to", "already been", "i saw", "i have seen", "already saw"))
     if mentions_past_visit:
@@ -865,7 +903,8 @@ def chat_with_tripmate(request: ChatRequest):
     if preference_intent:
         trip.feedback = "; ".join(filter(None, (trip.feedback.strip(), message.strip())))[:300]
     should_discover = bool(
-        preference_intent or explicit_places or requested_country or mentions_past_visit
+        not information_question
+        and (preference_intent or explicit_places or requested_country or mentions_past_visit)
     )
     groups = {"within_budget": [], "stretch": []}
     if should_discover and not question_type:
@@ -937,7 +976,7 @@ def chat_with_tripmate(request: ChatRequest):
                     if max_rain is not None:
                         reply += f" The available Open-Meteo forecast for your dates shows a maximum daily precipitation probability of {max_rain}% across {len(rain_values)} forecast day(s); forecasts can change."
                         answer_sources.append({"name": "Open-Meteo forecast", "url": "https://open-meteo.com/"})
-        research = None if question_type == "budget" else wikipedia_research(focus["name"])
+        research = None if question_type in {"budget", "cost_estimate"} else wikipedia_research(focus["name"])
         photo = None
         if question_type == "activities" and routes and routes[0]["places"]:
             photo = wikipedia_page_research(routes[0]["places"][0])
@@ -952,7 +991,7 @@ def chat_with_tripmate(request: ChatRequest):
             answer_sources.append({"name": photo["source"], "url": photo["url"]})
     elif question_type:
         reply = "Which destination are you asking about? Use “Ask about this place” on a destination card, or mention its name in your question. The cards include destination pictures."
-    elif requested_country and explicit_places:
+    elif requested_country and explicit_places and not information_question:
         options = [item for group in groups.values() for item in group]
         if options:
             selected = options[0]
@@ -974,6 +1013,8 @@ def chat_with_tripmate(request: ChatRequest):
         reply = f"I’ll look for Bangladesh destinations related to {', '.join(additions)} and compare them with your budget. Choose a result to see its day-by-day plan."
     elif mentions_past_visit and trip.visited_places:
         reply = f"I’ve marked {', '.join(sorted(mentioned_places))} as already visited. Choose a destination and I’ll avoid those stops in the itinerary."
+    elif information_question:
+        reply = ""
     elif explicit_places and matches:
         selected = next(
             (
@@ -1010,8 +1051,8 @@ def chat_with_tripmate(request: ChatRequest):
         reply = "I couldn’t find a matching destination in the current Bangladesh catalog. Try a preference such as mountains, beaches, nature, history, or tea gardens."
     deterministic_reply = bool(
         question_type or additions or mentions_past_visit
-        or (requested_country and explicit_places)
-        or (explicit_places and matches)
+        or (not information_question and requested_country and explicit_places)
+        or (not information_question and explicit_places and matches)
     )
     if deterministic_reply:
         local_result = {"reply": reply, "sources": [], "status": "tripmate_tools"}
@@ -1022,7 +1063,7 @@ def chat_with_tripmate(request: ChatRequest):
             groups,
             request.history,
             knowledge_base=get_knowledge_base(),
-            fallback_reply=reply,
+            fallback_reply=None if information_question else reply,
         )
     reply = local_result["reply"]
     answer_sources.extend(local_result["sources"])
@@ -1047,6 +1088,9 @@ def chat_with_tripmate(request: ChatRequest):
         "recommendations": groups,
         "answer_media": answer_media,
         "answer_sources": answer_sources,
+        "suggested_questions": _suggested_questions_for_chat(
+            message, reply, request.history,
+        ),
         "agent_status": agent_status,
     }
 

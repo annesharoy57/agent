@@ -297,6 +297,62 @@ class TripPlanningTests(unittest.TestCase):
         self.assertIn("transport (BDT 3,520)", result["reply"])
         self.assertEqual(result["agent_status"], "tripmate_tools")
 
+    def test_combined_cost_question_answers_all_requested_categories_for_two(self):
+        request = ChatRequest(
+            message="Can you estimate the total transportation, food, and entry costs for both of us",
+            trip=TripRequest(**trip_payload(destination="Sonargaon")),
+            plan_estimate={
+                "destination": "Sonargaon", "budget": 20000, "currency": "BDT",
+                "estimated_total": 6000, "budget_difference": 14000,
+                "within_budget": True,
+                "breakdown": {
+                    "transport": 1200, "accommodation": 0, "food": 800,
+                    "activities": 500, "local_travel": 200, "contingency": 300,
+                },
+            },
+        )
+        with (
+            patch("app.main.discover_destinations") as discovery,
+            patch("app.main.wikipedia_research") as wiki,
+            patch("app.main.generate_reply") as local_agent,
+        ):
+            result = chat_with_tripmate(request)
+
+        self.assertEqual(classify_travel_question(request.message), "cost_estimate")
+        self.assertIn("Transportation", result["reply"])
+        self.assertIn("Food", result["reply"])
+        self.assertIn("Attractions and activities", result["reply"])
+        self.assertIn("BDT 5,400", result["reply"])
+        self.assertEqual(result["answer_media"], [])
+        self.assertEqual(result["answer_sources"], [])
+        discovery.assert_not_called()
+        wiki.assert_not_called()
+        local_agent.assert_not_called()
+
+    def test_cost_question_with_food_is_not_misclassified_as_food(self):
+        self.assertEqual(
+            classify_travel_question("Estimate transportation, food, and entry costs"),
+            "cost_estimate",
+        )
+
+    def test_cost_question_estimates_from_catalog_when_plan_estimate_missing(self):
+        request = ChatRequest(
+            message="Can you estimate transportation, food, and entry costs for both of us?",
+            trip=TripRequest(**trip_payload(destination="Sonargaon")),
+        )
+        with (
+            patch("app.main.wikipedia_research") as wiki,
+            patch("app.main.generate_reply") as local_agent,
+        ):
+            result = chat_with_tripmate(request)
+
+        self.assertIn("Estimated costs for 2 people", result["reply"])
+        self.assertIn("Estimated total: BDT 5,800–8,600", result["reply"])
+        self.assertIn("not verified live prices", result["reply"])
+        self.assertEqual(result["answer_media"], [])
+        wiki.assert_not_called()
+        local_agent.assert_not_called()
+
     def test_foreign_currency_budget_and_estimates_use_the_same_rate(self):
         request = TripRequest(**trip_payload(
             budget=100,

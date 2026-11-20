@@ -80,6 +80,59 @@ class LocalAgentTests(unittest.TestCase):
         self.assertNotIn("tiger", result["reply"].casefold())
         self.assertNotIn("crocodile", result["reply"].casefold())
 
+    def test_goaldi_architecture_question_uses_all_features_and_only_matching_sources(self):
+        self.knowledge_base.upsert_documents([
+            {
+                "id": "goaldi-daily-star",
+                "title": "Goaldi Mosque: a Sultanate-era monument",
+                "content": (
+                    "Goaldi Mosque in Sonargaon has a square prayer hall and a single dome. "
+                    "It has four circular corner towers, terracotta decoration, three mihrabs, "
+                    "and three arched doorways on the east side. It is an example of Bengal "
+                    "Sultanate-era architecture."
+                ),
+                "source": "The Daily Star",
+                "source_url": "https://www.thedailystar.net/old-site/2004/01/26/heritage.htm",
+            },
+            {
+                "id": "goaldi-tribune",
+                "title": "Goaldi Mosque architecture",
+                "content": (
+                    "At Goaldi Mosque in Sonargaon, squinch arches and pendentives support the dome. Circular corner towers "
+                    "are unusual compared with octagonal towers."
+                ),
+                "source": "Dhaka Tribune",
+                "source_url": "https://www.dhakatribune.com/feature/196851/goaldi-mosque-in-sonargaon/",
+            },
+            {
+                "id": "unrelated-bagerhat",
+                "title": "UNESCO Historic Mosque City of Bagerhat",
+                "content": "Bagerhat is a historic mosque city in Bangladesh.",
+                "source": "UNESCO",
+                "source_url": "https://whc.unesco.org/en/list/321/",
+            },
+        ])
+        with patch("app.conversation.generate_local_reply") as model:
+            result = generate_reply(
+                "What are the five most unique architectural features of Goaldi Mosque? "
+                "Explain its dome, corner towers, terracotta decorations, mihrabs, and "
+                "entrance in simple language. Also explain why these features are important "
+                "in Bengal's architectural history.",
+                {"destination": "Sonargaon"},
+                {},
+                knowledge_base=self.knowledge_base,
+            )
+
+        self.assertEqual(result["status"], "curated_knowledge")
+        answer = result["reply"].casefold()
+        for feature in ("single dome", "corner towers", "terracotta", "mihrabs", "entrances"):
+            self.assertIn(feature, answer)
+        urls = {source["url"] for source in result["sources"]}
+        self.assertIn("https://www.thedailystar.net/old-site/2004/01/26/heritage.htm", urls)
+        self.assertIn("https://www.dhakatribune.com/feature/196851/goaldi-mosque-in-sonargaon/", urls)
+        self.assertNotIn("https://whc.unesco.org/en/list/321/", urls)
+        model.assert_not_called()
+
     def test_prefers_relevant_sourced_notes_over_catalog_hits(self):
         self.knowledge_base.upsert_documents([
             {
